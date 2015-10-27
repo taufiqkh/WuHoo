@@ -33,8 +33,8 @@ public class WuHoo {
         }
         String command = jCommander.getParsedCommand();
         if (command == null) {
-            //printUsage();
-            //System.exit(0);
+            printUsage();
+            System.exit(0);
         }
         final WebInterface webInterface;
         try {
@@ -49,7 +49,9 @@ public class WuHoo {
         try {
             System.out.println("Game Info:");
             System.out.println(webInterface.getGameInfo());
-//            webInterface.startShutdown("", 10, "");
+            if (command.equals(shutdown.getCommandName())) {
+                webInterface.startShutdown(SHUTDOWN_INSTIGATOR, shutdown.secondsToShutdown, shutdown.reason);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -79,8 +81,11 @@ public class WuHoo {
         private static final String START_SHUTDOWN = "startshutdown";
         private static final int DEFAULT_SECONDS_TO_SHUTDOWN = 60 * 10;
 
-        @Parameter
+        @Parameter(names = "--secondstoshutdown")
         Integer secondsToShutdown = DEFAULT_SECONDS_TO_SHUTDOWN;
+
+        @Parameter(names = "--reason")
+        String reason = "Server is shutting down";
 
         public String getCommandName() {
             return START_SHUTDOWN;
