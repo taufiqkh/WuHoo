@@ -36,6 +36,24 @@
       <artifactId>jcommander</artifactId>
       <version>1.48</version>
     </dependency>
+    <dependency>
+      <!-- Install with:
+          mvn install:install-file -Dfile=common.jar -DgroupId=com.wurmonline \
+          -DartifactId=WurmCommon -Dversion=<buildid> -Dpackaging=jar
+      -->
+      <groupId>com.wurmonline</groupId>
+      <artifactId>WurmCommon</artifactId>
+      <version>828553</version>
+    </dependency>
+    <dependency>
+      <!-- Install with:
+          mvn install:install-file -Dfile=server.jar -DgroupId=com.wurmonline \
+          -DartifactId=WurmServer -Dversion=<buildid> -Dpackaging=jar
+      -->
+      <groupId>com.wurmonline</groupId>
+      <artifactId>WurmServer</artifactId>
+      <version>828553</version>
+    </dependency>
   </dependencies>
 
   <build>
