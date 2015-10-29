@@ -11,6 +11,7 @@ import com.wurmonline.wuhoo.command.CommandGetInfo;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.*;
 
 /**
  * Main class
@@ -19,12 +20,25 @@ public class WuHoo {
     private static final String SHUTDOWN_INSTIGATOR = "Remote command";
     private static final int ERR_BAD_ARGUMENTS = 1;
     private static final int ERR_REMOTE_INTERFACE_LOOKUP = 2;
+    private static final Map<String, Command> HANDLED_COMMANDS;
+    static {
+        HashMap<String, Command> handledCommands = new HashMap<>();
+        for (Command command : new Command[] {
+                new CommandGetInfo(),
+                new CommandBroadcastMessage(),
+                new CommandStartShutdown()
+        }) {
+            handledCommands.put(command.getCommandName(), command);
+        }
+        HANDLED_COMMANDS = Collections.unmodifiableMap(handledCommands);
+    }
 
     public static void main(String[] args) {
         MainArguments mainArgs = new MainArguments();
         JCommander jCommander = new JCommander(mainArgs);
-        CommandGetInfo getInfo = addCommand(jCommander, new CommandGetInfo());
-        CommandStartShutdown shutdown = addCommand(jCommander, new CommandStartShutdown());
+        for (Command command : HANDLED_COMMANDS.values()) {
+            addCommand(jCommander, command);
+        }
         try {
             jCommander.parse(args);
         } catch (ParameterException e) {
@@ -47,24 +61,14 @@ public class WuHoo {
             return;
         }
         try {
-            System.out.println("Game Info:");
-            System.out.println(webInterface.getGameInfo());
-            if (command.equals(shutdown.getCommandName())) {
-                webInterface.startShutdown(SHUTDOWN_INSTIGATOR, shutdown.secondsToShutdown, shutdown.reason);
+            if (HANDLED_COMMANDS.containsKey(command)) {
+                HANDLED_COMMANDS.get(command).execute(webInterface);
+            } else {
+                System.out.println("Unhandled command: " + command);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-    }
-
-    private boolean startShutdown(WebInterface serverInterface, int secondsToShutdown, String reason) {
-        try {
-            serverInterface.startShutdown(SHUTDOWN_INSTIGATOR, secondsToShutdown, reason);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
     }
 
     private static <T extends Command> T addCommand(JCommander jCommander, T command) {
@@ -78,7 +82,7 @@ public class WuHoo {
 
     @Parameters(commandDescription = "Commences a shutdown of the server")
     private static class CommandStartShutdown implements Command {
-        private static final String START_SHUTDOWN = "startshutdown";
+        public static final String START_SHUTDOWN = "startshutdown";
         private static final int DEFAULT_SECONDS_TO_SHUTDOWN = 60 * 10;
 
         @Parameter(names = "--secondstoshutdown")
@@ -87,11 +91,48 @@ public class WuHoo {
         @Parameter(names = "--reason")
         String reason = "Server is shutting down";
 
+        public boolean execute(WebInterface serverInterface) throws RemoteException {
+            try {
+                serverInterface.startShutdown(SHUTDOWN_INSTIGATOR, secondsToShutdown, reason);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
         public String getCommandName() {
             return START_SHUTDOWN;
         }
     }
 
+    @Parameters(commandDescription = "Broadcasts a server-wide message")
+    private static class CommandBroadcastMessage implements Command {
+        public static final String BROADCAST = "broadcast";
+
+        @Parameter(description = "Message to be broadcast to the server")
+        List<String> message = new ArrayList<>();
+
+        public String getCommandName() {
+            return BROADCAST;
+        }
+
+        public boolean execute(WebInterface serverInterface) throws RemoteException {
+            if (message == null) {
+                System.err.println("Cannot broadcast null message");
+            } else if (message.isEmpty()) {
+                System.err.println("Cannot broadcast empty message");
+            } else {
+                if (message.size() > 1) {
+                    serverInterface.broadcastMessage(String.join(" ", message));
+                } else {
+                    serverInterface.broadcastMessage(message.get(0));
+                }
+                return true;
+            }
+            return false;
+        }
+    }
     private static class MainArguments {
         @Parameter(names = { "-h", "--hostname" })
         private String hostname = "localhost";
