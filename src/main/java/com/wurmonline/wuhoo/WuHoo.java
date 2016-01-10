@@ -33,7 +33,7 @@ public class WuHoo {
     }
 
     /**
-     * Command line interface
+     * Process command-line arguments and call the web interface.
      *
      * @param args Command line arguments.
      */
