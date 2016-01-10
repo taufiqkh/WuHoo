@@ -2,9 +2,14 @@ package com.wurmonline.wuhoo;
 
 import com.beust.jcommander.ParameterException;
 import com.wurmonline.server.webinterface.WebInterface;
+import com.wurmonline.wuhoo.command.Command;
+import com.wurmonline.wuhoo.command.CommandBroadcastMessage;
+import com.wurmonline.wuhoo.command.CommandGetInfo;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.rmi.RemoteException;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -23,6 +28,7 @@ public class CommandParseTest {
 
     @Before
     public void setup() {
+        reset(webInterface);
         parser = new CommandParser();
     }
 
@@ -56,7 +62,36 @@ public class CommandParseTest {
     }
 
     @Test
-    public void testBroadcastParameters() {
-        parser.parse("broadcast", "foo");
+    public void testBroadcastSingleValue() throws RemoteException {
+        String message = "foo";
+        parser.parse("broadcast", message);
+        executeValid();
+        verify(webInterface).broadcastMessage(message);
+    }
+
+    @Test
+    public void testBroadcastManyValues() throws RemoteException {
+        String message = "This is a test";
+        parser.parse("broadcast", "This", "is", "a", "test");
+        executeValid();
+        verify(webInterface).broadcastMessage(message);
+    }
+
+    public void testGetGameInfo() throws RemoteException {
+        String info = "Game info";
+        when(webInterface.getGameInfo()).thenReturn(info);
+        parser.parse("getinfo");
+        executeValid();
+        verify(webInterface).getGameInfo();
+    }
+
+    private void executeValid() {
+        Command command = parser.getCommand();
+        assertNotNull("Returned command should not be null", command);
+        try {
+            command.execute(webInterface);
+        } catch (RemoteException e) {
+            assertTrue("Remote exception should not be thrown", false);
+        }
     }
 }
