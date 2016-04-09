@@ -1,10 +1,8 @@
-package com.wurmonline.wuhoo;
+package com.quiptiq.wuremote;
 
 import com.beust.jcommander.ParameterException;
+import com.quiptiq.wuremote.command.Command;
 import com.wurmonline.server.webinterface.WebInterface;
-import com.wurmonline.wuhoo.command.Command;
-import com.wurmonline.wuhoo.command.CommandBroadcastMessage;
-import com.wurmonline.wuhoo.command.CommandGetInfo;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

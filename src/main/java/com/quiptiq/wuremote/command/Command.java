@@ -1,4 +1,4 @@
-package com.wurmonline.wuhoo.command;
+package com.quiptiq.wuremote.command;
 
 import com.wurmonline.server.webinterface.WebInterface;
 

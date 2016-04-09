@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.quiptiq.wuhoo</groupId>
-  <artifactId>WuHoo</artifactId>
+  <groupId>com.quiptiq.wuremote</groupId>
+  <artifactId>WuRemote</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>WuHoo</name>
+  <name>WuRemote</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <main.class>com.quiptiq.wuhoo.WuHoo</main.class>
+    <main.class>com.quiptiq.wuremote.WuRemote</main.class>
   </properties>
 
   <!-- Use sonatype oss public for snapshots -->

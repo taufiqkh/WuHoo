@@ -1,22 +1,16 @@
-package com.wurmonline.wuhoo;
+package com.quiptiq.wuremote;
 
-import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.wurmonline.server.webinterface.WebInterface;
-import com.wurmonline.wuhoo.command.Command;
-import com.wurmonline.wuhoo.command.CommandBroadcastMessage;
-import com.wurmonline.wuhoo.command.CommandGetInfo;
-import com.wurmonline.wuhoo.command.CommandStartShutdown;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.*;
 
 /**
  * Command-line interface to the Wurm Server RMI.
  */
-public class WuHoo {
+public class WuRemote {
     private static final int ERR_BAD_ARGUMENTS = 1;
     private static final int ERR_REMOTE_INTERFACE_LOOKUP = 2;
 
@@ -33,7 +27,7 @@ public class WuHoo {
             System.err.println("Can't process arguments " + e.getMessage());
             System.exit(ERR_BAD_ARGUMENTS);
         }
-        if (parser.hasParsedCommand()) {
+        if (!parser.hasParsedCommand()) {
             printUsage();
             System.exit(0);
         }

@@ -1,12 +1,12 @@
-package com.wurmonline.wuhoo;
+package com.quiptiq.wuremote;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.wurmonline.server.webinterface.WebInterface;
-import com.wurmonline.wuhoo.command.Command;
-import com.wurmonline.wuhoo.command.CommandBroadcastMessage;
-import com.wurmonline.wuhoo.command.CommandGetInfo;
-import com.wurmonline.wuhoo.command.CommandStartShutdown;
+import com.quiptiq.wuremote.command.Command;
+import com.quiptiq.wuremote.command.CommandBroadcastMessage;
+import com.quiptiq.wuremote.command.CommandGetInfo;
+import com.quiptiq.wuremote.command.CommandStartShutdown;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,6 +78,10 @@ public class CommandParser {
         return mainArguments.name;
     }
 
+    public String getPassword() {
+        return mainArguments.password;
+    }
+
     /**
      * @return The primary command given, as parsed from the command line
      */
@@ -120,5 +124,8 @@ public class CommandParser {
 
         @Parameter(names = {"-n", "--name"})
         private String name = "WebInterface";
+
+        @Parameter(names = {"-p", "--password"}, description = "Connection password", password = true)
+        private String password = null;
     }
 }
